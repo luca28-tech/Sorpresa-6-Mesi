@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Per Te ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-pink: #ff4d79;
+            --light-pink: #ffe6ea;
+            --bg-pink: #fff0f3;
+            --text-dark: #4a0018;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-pink);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column; /* Necessario per impilare il nuovo titolo e il riquadro */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- NUOVO TITOLO FLUTTUANTE --- */
+        #top-title {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-pink);
+            font-size: 4rem;
+            margin-bottom: 30px; /* Spazio tra il titolo e il riquadro bianco */
+            text-align: center;
+            text-shadow: 0 5px 15px rgba(255, 77, 121, 0.2);
+            z-index: 10;
+        }
+
+        /* --- STILI SCHERMATE (Login, Sicurezza, Main) --- */
+        .screen {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 121, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        #security-screen, #main-screen {
+            display: none; /* Nascosti all'inizio */
+        }
+
+        #main-screen {
+            background: transparent;
+            box-shadow: none;
+            max-width: 800px;
+            padding: 20px 0;
+        }
+
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-pink);
+        }
+
+        h1 { font-size: 2.2rem; margin-bottom: 20px; }
+        
+        /* Effetto battito cardiaco per il titolo finale */
+        #main-screen h1 { 
+            font-size: 4rem; 
+            margin-bottom: 10px; 
+            text-shadow: 0 0 15px rgba(255, 77, 121, 0.4);
+            animation: battito 1.5s infinite;
+        }
+
+        @keyframes battito {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.05); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.05); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-pink);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus { border-color: var(--primary-pink); }
+
+        button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, background-color 0.3s;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #e63963;
+            transform: scale(1.05);
+        }
+
+        .error {
+            color: red;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- CONTATORE TEMPO --- */
+        #timer-container {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(255, 77, 121, 0.1);
+            font-weight: 600;
+            color: var(--primary-pink);
+        }
+
+        /* --- GALLERY --- */
+        .gallery-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 10px solid white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(255, 77, 121, 0.3);
+            background: white;
+        }
+
+        .photo-slide {
+            display: none;
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .photo-slide.active { display: block; }
+
+        .photo-slide img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .caption {
+            padding: 15px;
+            font-weight: 600;
+            color: var(--primary-pink);
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--primary-pink);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn.prev { left: -20px; }
+        .nav-btn.next { right: -20px; }
+
+        /* --- FALLING HEARTS --- */
+        .heart {
+            position: fixed;
+            top: -10vh;
+            color: var(--primary-pink);
+            font-size: 1.5rem;
+            user-select: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- IL NUOVO TITOLO FLUTTUANTE -->
+    <h1 id="top-title">Per Te ❤️</h1>
+
+    <!-- FASE 1: Schermata di Accesso Base -->
+    <div id="login-screen" class="screen">
+        <h1>Accesso Riservato</h1>
+        <p style="margin-bottom: 20px; font-size: 0.9rem;">Inserisci i tuoi dati per continuare.</p>
+        
+        <div class="input-group">
+            <label for="name">Nome</label>
+            <input type="text" id="name" placeholder="Il tuo nome">
+        </div>
+        
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="La tua email">
+        </div>
+
+        <button onclick="checkStep1()">Avanti</button>
+        <div id="error-msg-1" class="error">Dati errati. Sei sicura di essere tu?</div>
+    </div>
+
+    <!-- FASE 2: Domanda di Sicurezza -->
+    <div id="security-screen" class="screen">
+        <h1>Controllo Sicurezza</h1>
+        <p style="margin-bottom: 20px; font-size: 0.9rem;">Per essere sicuro al 100% che sei la mia ragazza, rispondi a questa domanda segreta:</p>
+        
+        <div class="input-group">
+            <label for="secret-answer">Dove ci siamo dati il primo bacio?</label>
+            <input type="text" id="secret-answer" placeholder="La tua risposta...">
+        </div>
+
+        <button onclick="checkStep2()">Sblocca ❤️</button>
+        <div id="error-msg-2" class="error">Sbagliato! Riprova, dai che lo sai.</div>
+    </div>
+
+    <!-- FASE 3: Schermata Principale -->
+    <div id="main-screen" class="screen">
+        <h1>6 Mesi di Noi</h1>
+        
+        <!-- Contatore del tempo -->
+        <div id="timer-container">
+            Stiamo insieme da: <br>
+            <span id="timer" style="font-size: 1.3rem;">Calcolo in corso...</span>
+        </div>
+
+        <p class="message" style="margin-bottom: 30px;">
+            Sorpresa! Volevo fare qualcosa di speciale per il nostro sesto complimese.<br>
+            Questi sono solo alcuni dei nostri momenti migliori.
+        </p>
+
+        <!-- Galleria Foto -->
+        <div class="gallery-container">
+            <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
+            
+            <div class="photo-slide active">
+                <img src="20260101_170457.jpg" alt="Foto 1">
+                <div class="caption">Il nostro primo mese</div>
+            </div>
+            
+            <div class="photo-slide">
+                <img src="20260117_131804.jpg" alt="Foto 2">
+                <div class="caption">In giro insieme</div>
+            </div>
+            
+            <div class="photo-slide">
+                <img src="IMG-20260127-WA0008.jpg" alt="Foto 3">
+                <div class="caption">Il pangocciolo a Parigi</div>
+            </div>
+
+             <div class="photo-slide">
+                <img src="IMG-20260523-WA0024.jpg" alt="Foto 4">
+                <div class="caption">I bacini di amsterdam</div>
+            </div>
+
+              <div class="photo-slide">
+                <img src="IMG-20260523-WA0037.jpg" alt="Foto 5">
+                <div class="caption">I biscotti di Van Stapele</div>
+            </div>
+               <div class="photo-slide">
+                <img src="IMG-20260523-WA0045.jpg" alt="Foto 6">
+                <div class="caption">Al colosseo</div>
+            </div>
+
+             <div class="photo-slide">
+                <img src="IMG-20260523-WA0038.jpg" alt="Foto 7">
+                <div class="caption">La fontana di trevi</div>
+            </div>
+
+             <div class="photo-slide">
+                <img src="IMG-20260523-WA0008.jpg" alt="Foto 8">
+                <div class="caption">Le nostre patatine enormi</div>
+            </div>
+
+             <div class="photo-slide">
+                <img src="IMG-20260523-WA0050.jpg" alt="Foto 9">
+                <div class="caption">Ed infine a Napoli</div>
+            </div>
+
+            
+
+            <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🛠️ CONFIGURAZIONE - MODIFICA QUESTI DATI
+        // ==========================================
+        
+        // Dati Accesso Fase 1 (Tutto in minuscolo)
+        const expectedName = "giorgia"; 
+        const expectedEmail = "sambrigiorgia52@gmail.com";
+        
+        // Dati Accesso Fase 2 (Tutto in minuscolo)
+        const expectedAnswer = "cipollina"; 
+
+        // Data di inizio relazione (Anno, Mese, Giorno, Ora, Minuti)
+        // I mesi in JavaScript partono da 0 (Gennaio = 0 ... Dicembre = 11)
+        const startDate = new Date(2025, 10, 23, 14, 30).getTime();
+
+        // ==========================================
+
+        // --- LOGICA ACCESSO ---
+        function checkStep1() {
+            const nameInput = document.getElementById('name').value.toLowerCase().trim();
+            const emailInput = document.getElementById('email').value.toLowerCase().trim();
+            
+            if (nameInput === expectedName && emailInput === expectedEmail) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('security-screen').style.display = 'block';
+            } else {
+                document.getElementById('error-msg-1').style.display = 'block';
+            }
+        }
+
+        function checkStep2() {
+            const answerInput = document.getElementById('secret-answer').value.toLowerCase().trim();
+            
+            if (answerInput === expectedAnswer) {
+                // Nasconde il titolo fluttuante iniziale
+                document.getElementById('top-title').style.display = 'none';
+                
+                // Mostra la schermata finale
+                document.getElementById('security-screen').style.display = 'none';
+                document.getElementById('main-screen').style.display = 'block';
+                
+                // Avvia le animazioni
+                startHeartRain();
+                setInterval(updateTimer, 1000);
+                updateTimer(); 
+            } else {
+                document.getElementById('error-msg-2').style.display = 'block';
+            }
+        }
+
+        // --- LOGICA CONTATORE ---
+        function updateTimer() {
+            const now = new Date().getTime();
+            const difference = now - startDate;
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = 
+                `${days} Giorni, ${hours} Ore, ${minutes} Minuti, ${seconds} Secondi`;
+        }
+
+        // --- LOGICA GALLERIA E CUORI ---
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".photo-slide");
+
+        function changeSlide(n) {
+            slides[slideIndex].classList.remove("active");
+            slideIndex += n;
+            if (slideIndex >= slides.length) slideIndex = 0;
+            if (slideIndex < 0) slideIndex = slides.length - 1;
+            slides[slideIndex].classList.add("active");
+        }
+
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerText = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = Math.random() * 1.5 + 0.5 + "rem";
+            heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+
+        function startHeartRain() {
+            setInterval(createHeart, 300);
+        }
+    </script>
+</body>
+</html>
